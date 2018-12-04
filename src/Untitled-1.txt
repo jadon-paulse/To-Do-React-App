@@ -1,0 +1,25 @@
+ToDo = {}
+1
+ToDo = { Id:number,
+         Title:string,
+         IsDone:bool};
+2
+ToDoArray = [ {Id, Title,IsDone},
+              {Id, Title,IsDone} , 
+              {Id, Title,IsDone}]
+
+------
+
+ToDoArray = {[value:string, IsDone:bool:] 
+              = [ {Id, Title,IsDone},
+                  {Id, Title,IsDone} , 
+                  {Id, Title,IsDone},
+             value:string, IsDone:bool:] 
+              = [ {Id, Title,IsDone},
+                  {Id, Title,IsDone} , 
+                  {Id, Title,IsDone},
+             value:string, IsDone:bool:] 
+              = [ {Id, Title,IsDone},
+                  {Id, Title,IsDone} , 
+                  {Id, Title,IsDone}]}
+

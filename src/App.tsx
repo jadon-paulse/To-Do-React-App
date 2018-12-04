@@ -5,19 +5,37 @@ import todoApi from "./Api"
 
 import logo from './logo.svg';
 
+
+// interface TaggedValue {
+//   name: string;
+//   age: number
+// }
+
+// function printLabel (taggedObj: TaggedValue) {
+//   console.log(taggedObj);
+// }
+
+
+
 class App extends React.Component {
 
-  public state = { value: "", todoArr: [], isDone: false };
+  public state = { value: "", todoArr: [], isDone: true};
 
   constructor(props: any) {
     super(props)
+    todoApi.all().then(result => {
+      this.setState({ todoArr: result }, () => {
+        console.log(this.state);
+      })
+    });
   }
-
+   
   onInputChange = (e: any) => {
     this.setState({ value: e.target.value })
+    // console.log(todoApi.todos[id])
   }
 
-  buttonClick = (e: any) => {
+  buttonClick = (e: any) =>{
     const todo = {
       task: this.state.value,
       done: this.state.isDone
@@ -28,9 +46,21 @@ class App extends React.Component {
         console.log(this.state);
       })
     });
+  }
 
-    // this.setState({}, () => { console.log("test2") });
-    // this.setState({}).then((a: any, b: any) => { console.log("test3") });
+
+  doneClick = (task: any) => {
+    this.setState({isDone: true});   
+  }
+
+  notDoneClick = (e: any) => {
+    this.setState({isDone: false});
+  }
+
+  editButtonClick = (e: any, id: any, name: String) => {
+
+      
+
   }
 
   public render() {
@@ -47,11 +77,18 @@ class App extends React.Component {
           <code>Enter an activity you wish too complete</code>
         </p>
         <TodoInput value={this.state.value}
-          onInputChange={this.onInputChange} buttonClick={this.buttonClick} />
+          onInputChange={this.onInputChange} 
+          buttonClick={this.buttonClick}/>
         <div>
           This is a value: {this.state.value}
         </div>
-        <TodoList todoArr={this.state.todoArr} isDone={this.state.isDone} />
+        <TodoList 
+          todoArr={this.state.todoArr} 
+          isDone={this.state.isDone} 
+          doneClick={this.doneClick}
+          editButtonClick={this.editButtonClick}
+        />
+          
       </div>
     );
   }
@@ -61,7 +98,8 @@ const TodoInput = (props: any) => {
 
   return (
     <div>
-      <input type="text" placeholder="Enter New To Do" value={props.value}
+      <input type="text" placeholder="Enter New To Do" 
+        value={props.value}
         onChange={props.onInputChange} />
       <button onClick={props.buttonClick}>Add To Do</button>
     </div>
@@ -73,9 +111,15 @@ export default App;
 const TodoList = (props: any) => {
   const isDone = props.isDone;
    const listItems = props.todoArr.map((item: any) => 
-       <li>{item.task}:{isDone ? "[Done]" : "[Must do!]"}</li>  
+       <li>{item.task}:{isDone ? "[Done]" : "[Must do!]"}
+       <button onClick={task => props.doneClick(item)}>Done</button>
+       <button onClick={props.notDoneClick}>Not Done</button>
+       <button onClick={(e) => {props.editButtonClick(e, item.id)}}>Edit</button></li>
     );
   return(
     <ul>{listItems}</ul>
   )
 }
+
+// const myObj = {age: 10, name: "dead"};
+// const Run = printLabel(myObj);
