@@ -5,7 +5,6 @@ import todoApi from "./Api"
 
 import logo from './logo.svg';
 
-
 // interface TaggedValue {
 //   name: string;
 //   age: number
@@ -19,10 +18,14 @@ import logo from './logo.svg';
 
 class App extends React.Component {
 
-  public state = { value: "", todoArr: [], isDone: true};
+  public state = { value: "", todoArr: [], isDone: false};
 
   constructor(props: any) {
     super(props)
+    this.loadAllData();
+  }
+
+  loadAllData = () => {
     todoApi.all().then(result => {
       this.setState({ todoArr: result }, () => {
         console.log(this.state);
@@ -49,17 +52,30 @@ class App extends React.Component {
   }
 
 
-  doneClick = (task: any) => {
-    this.setState({isDone: true});   
+  doneClick = (task: any, id: any) => {
+    this.setState({isDone: true}), () => {
+        
+    }   
   }
 
   notDoneClick = (e: any) => {
     this.setState({isDone: false});
   }
 
-  editButtonClick = (e: any, id: any, name: String) => {
-
-      
+  editButtonClick = (id: any) => {
+    const todo = {
+      id: id,
+      task: this.state.value,
+    }
+    todoApi.update(id, todo).then(() => {this.loadAllData()})
+    // return (
+    //   <div>
+    //     <input type="text" 
+    //       value={props.id}
+    //       onChange={props.onInputChange} />
+    //   </div>
+    // )
+        // console.log(id)
 
   }
 
@@ -86,6 +102,7 @@ class App extends React.Component {
           todoArr={this.state.todoArr} 
           isDone={this.state.isDone} 
           doneClick={this.doneClick}
+          notDoneClick={this.notDoneClick}
           editButtonClick={this.editButtonClick}
         />
           
@@ -109,16 +126,39 @@ const TodoInput = (props: any) => {
 export default App;
 
 const TodoList = (props: any) => {
-  const isDone = props.isDone;
-   const listItems = props.todoArr.map((item: any) => 
-       <li>{item.task}:{isDone ? "[Done]" : "[Must do!]"}
-       <button onClick={task => props.doneClick(item)}>Done</button>
-       <button onClick={props.notDoneClick}>Not Done</button>
-       <button onClick={(e) => {props.editButtonClick(e, item.id)}}>Edit</button></li>
-    );
-  return(
-    <ul>{listItems}</ul>
-  )
+  // console.log("props.todoArr->", props.todoArr);
+  return props.todoArr.map((item: any) => {
+    return (
+      <li>
+        {item.task}:{item.isDone ? "[Done]" : "[Must do!]"}
+
+        <button onClick={task => props.doneClick(task,item.id)}>
+        Done</button>
+
+        <button onClick={(e) => {props.notDoneClick(item.id)}}>
+        Not Done</button>
+
+        <button onClick={() => { props.editButtonClick(item.id)}}>
+        Edit</button>
+      </li>
+    )
+  })
+  // const isDone = props.isDone;
+  // const listItems = props.todoArr.map((item: any) => 
+  //      <li>{item.id} - {item.task}:{isDone ? "[Done]" : "[Must do!]"}
+
+  //      <button onClick={task => props.doneClick(task,item.id)}>
+  //      Done</button>
+
+  //      <button onClick={(e) => {props.notDoneClick(item.id)}}>
+  //      Not Done</button>
+
+  //      <button onClick={(e) => {props.editButtonClick(item.id)}}>
+  //      Edit</button></li>
+  //   );
+  // return(
+  //   <ul>{listItems}</ul>
+  // )
 }
 
 // const myObj = {age: 10, name: "dead"};
