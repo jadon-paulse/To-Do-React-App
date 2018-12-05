@@ -38,6 +38,7 @@ const todoApi = (function () {
         try {
           const updated = { ...todos[id], ...todo };
           todos[id] = updated;
+          
           localStorage.setItem("todos", JSON.stringify(todos));
           return resolve(updated);
         } catch (e) {

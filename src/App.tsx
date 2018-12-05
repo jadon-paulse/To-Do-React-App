@@ -18,7 +18,7 @@ import logo from './logo.svg';
 
 class App extends React.Component {
 
-  public state = { value: "", todoArr: [], isDone: false};
+  public state = { value: "", todoArr: []};
 
   constructor(props: any) {
     super(props)
@@ -41,7 +41,7 @@ class App extends React.Component {
   buttonClick = (e: any) =>{
     const todo = {
       task: this.state.value,
-      done: this.state.isDone
+      done: false,
     }
     todoApi.create(todo)
     todoApi.all().then(result => {
@@ -51,16 +51,29 @@ class App extends React.Component {
     });
   }
 
-
-  doneClick = (task: any, id: any) => {
-    this.setState({isDone: true}), () => {
-        
-    }   
+  switchDone = (todoItem: any) => {
+    const todo = { ...todoItem, done: !todoItem.done }
+    todoApi.update(todo.id, todo).then(() => {this.loadAllData()})
   }
 
-  notDoneClick = (e: any) => {
-    this.setState({isDone: false});
-  }
+  // doneClick = (id: any) => {
+  //   // this.setState({isDone: true}); 
+  //   const todo = {
+  //     id: id,
+  //     done: true,
+  //   }
+  //   todoApi.update(id, todo).then(() => {this.loadAllData()})
+  //   todoApi.update(todo.id, todo).then(() => {this.loadAllData()})
+  // }
+
+  // notDoneClick = (id: any) => {
+  //   // this.setState({isDone: false});
+  //   const todo = {
+  //     id: id,
+  //     done: false,
+  //   }
+  //   todoApi.update(id, todo).then(() => {this.loadAllData()})    
+  // }
 
   editButtonClick = (id: any) => {
     const todo = {
@@ -68,15 +81,6 @@ class App extends React.Component {
       task: this.state.value,
     }
     todoApi.update(id, todo).then(() => {this.loadAllData()})
-    // return (
-    //   <div>
-    //     <input type="text" 
-    //       value={props.id}
-    //       onChange={props.onInputChange} />
-    //   </div>
-    // )
-        // console.log(id)
-
   }
 
   public render() {
@@ -99,10 +103,8 @@ class App extends React.Component {
           This is a value: {this.state.value}
         </div>
         <TodoList 
-          todoArr={this.state.todoArr} 
-          isDone={this.state.isDone} 
-          doneClick={this.doneClick}
-          notDoneClick={this.notDoneClick}
+          todoArr={this.state.todoArr}  
+          switchDone={this.switchDone}
           editButtonClick={this.editButtonClick}
         />
           
@@ -130,16 +132,15 @@ const TodoList = (props: any) => {
   return props.todoArr.map((item: any) => {
     return (
       <li>
-        {item.task}:{item.isDone ? "[Done]" : "[Must do!]"}
+        {item.task}:{item.done ? "[Done]" : "[Must do!]"}
 
-        <button onClick={task => props.doneClick(task,item.id)}>
-        Done</button>
-
-        <button onClick={(e) => {props.notDoneClick(item.id)}}>
-        Not Done</button>
-
-        <button onClick={() => { props.editButtonClick(item.id)}}>
-        Edit</button>
+        <button onClick={task => props.switchDone(item)}>
+          {item.done ? "NOT DONE" : "DONE" }
+        </button>
+        
+        <button onClick={(e) => {props.editButtonClick(item.id)}}>
+          Edit
+        </button>
       </li>
     )
   })
