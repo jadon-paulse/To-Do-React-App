@@ -56,31 +56,21 @@ class App extends React.Component {
     todoApi.update(todo.id, todo).then(() => {this.loadAllData()})
   }
 
-  // doneClick = (id: any) => {
-  //   // this.setState({isDone: true}); 
-  //   const todo = {
-  //     id: id,
-  //     done: true,
-  //   }
-  //   todoApi.update(id, todo).then(() => {this.loadAllData()})
-  //   todoApi.update(todo.id, todo).then(() => {this.loadAllData()})
-  // }
-
-  // notDoneClick = (id: any) => {
-  //   // this.setState({isDone: false});
-  //   const todo = {
-  //     id: id,
-  //     done: false,
-  //   }
-  //   todoApi.update(id, todo).then(() => {this.loadAllData()})    
-  // }
-
   editButtonClick = (id: any) => {
     const todo = {
       id: id,
       task: this.state.value,
     }
     todoApi.update(id, todo).then(() => {this.loadAllData()})
+  }
+
+  removeButtonClick = (id: any, todoItem: any) => {
+    const todo = {
+      id: id,
+      task: todoItem,
+    }
+    todoApi.remove(todo.id).then(() => {this.loadAllData()})
+    console.log(todo)
   }
 
   public render() {
@@ -106,6 +96,7 @@ class App extends React.Component {
           todoArr={this.state.todoArr}  
           switchDone={this.switchDone}
           editButtonClick={this.editButtonClick}
+          removeButtonClick={this.removeButtonClick}
         />
           
       </div>
@@ -141,9 +132,22 @@ const TodoList = (props: any) => {
         <button onClick={(e) => {props.editButtonClick(item.id)}}>
           Edit
         </button>
+
+        <button onClick={(task) => {props.removeButtonClick(item.id)}}>
+          X
+        </button>
       </li>
     )
-  })
+  });
+
+
+
+
+
+
+
+
+
   // const isDone = props.isDone;
   // const listItems = props.todoArr.map((item: any) => 
   //      <li>{item.id} - {item.task}:{isDone ? "[Done]" : "[Must do!]"}
@@ -164,3 +168,22 @@ const TodoList = (props: any) => {
 
 // const myObj = {age: 10, name: "dead"};
 // const Run = printLabel(myObj);
+
+  // doneClick = (id: any) => {
+  //   // this.setState({isDone: true}); 
+  //   const todo = {
+  //     id: id,
+  //     done: true,
+  //   }
+  //   todoApi.update(id, todo).then(() => {this.loadAllData()})
+  //   todoApi.update(todo.id, todo).then(() => {this.loadAllData()})
+  // }
+
+  // notDoneClick = (id: any) => {
+  //   // this.setState({isDone: false});
+  //   const todo = {
+  //     id: id,
+  //     done: false,
+  //   }
+  //   todoApi.update(id, todo).then(() => {this.loadAllData()})    
+  // }
