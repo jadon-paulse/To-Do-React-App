@@ -18,7 +18,7 @@ import logo from './logo.svg';
 
 class App extends React.Component {
 
-  public state = { value: "", todoArr: []};
+  public state = { value: "", todoArr: [], diffLists: [] };
 
   constructor(props: any) {
     super(props)
@@ -27,8 +27,8 @@ class App extends React.Component {
 
   loadAllData = () => {
     todoApi.all().then(result => {
-      this.setState({ todoArr: result }, () => {
-        console.log(this.state);
+      this.setState({ todoArr: result, diffLists: result }, () => {
+        // console.log(this.state);
       })
     });
   }
@@ -36,6 +36,10 @@ class App extends React.Component {
   onInputChange = (e: any) => {
     this.setState({ value: e.target.value })
     // console.log(todoApi.todos[id])
+  }
+
+  onSearch = (e: any) => {
+    this.setState({ value: e.target.value })
   }
 
   buttonClick = (e: any) =>{
@@ -64,18 +68,51 @@ class App extends React.Component {
     todoApi.update(id, todo).then(() => {this.loadAllData()})
   }
 
-  removeButtonClick = (id: any, todoItem: any) => {
+  removeButtonClick = (id: any) => {
     const todo = {
       id: id,
-      task: todoItem,
     }
     todoApi.remove(todo.id).then(() => {this.loadAllData()})
-    console.log(todo)
+  }
+
+  displayAllButtonClick = () => {
+    this.loadAllData()
+  }
+
+  displayDoneButtonClick = () => {
+      todoApi.filterBy("done",true).then(results => 
+        {console.log(results);
+          this.setState({ todoArr: results }, () => {
+        console.log(this.state);
+      })
+    })
+    // console.log(todo)
+  }
+
+  displayNotDoneButtonClick = () => {
+    todoApi.filterBy("done",false).then(results => 
+      {console.log(results);
+        this.setState({ todoArr: results }, () => {
+      console.log(this.state);
+    })
+  })
+}
+
+  searchButtonClick = () => {
+    console.log("searchButtonClick->");
+    const todo = {
+      task: this.state.value,
+    }
+    todoApi.findBy("task",todo.task).then(results => 
+      {console.log("searchButtonClick ->",results);
+        this.setState({ todoArr: results }, () => {
+    })
+  })
   }
 
   public render() {
 
-    console.log(todoApi.create)
+    // console.log(todoApi.create)
     
     return (
       <div className="App">
@@ -86,9 +123,19 @@ class App extends React.Component {
         <p className="App-intro">
           <code>Enter an activity you wish too complete</code>
         </p>
+        <SearchInput todoArr={this.state.todoArr}
+          onSearch={this.onSearch}
+          search={this.state.value}
+          searchButtonClick={this.searchButtonClick} />
+          
         <TodoInput value={this.state.value}
+          todoArr={this.state.todoArr}
           onInputChange={this.onInputChange} 
-          buttonClick={this.buttonClick}/>
+          buttonClick={this.buttonClick}
+          displayDoneButtonClick={this.displayDoneButtonClick}
+          displayAllButtonClick={this.displayAllButtonClick}
+          displayNotDoneButtonClick={this.displayNotDoneButtonClick}
+          diffLists={this.state.diffLists}/>
         <div>
           This is a value: {this.state.value}
         </div>
@@ -104,19 +151,43 @@ class App extends React.Component {
   }
 }
 
-const TodoInput = (props: any) => {
+export default App;
 
-  return (
-    <div>
-      <input type="text" placeholder="Enter New To Do" 
-        value={props.value}
-        onChange={props.onInputChange} />
-      <button onClick={props.buttonClick}>Add To Do</button>
-    </div>
-  )
+const TodoInput = (props: any) => {
+    return (
+      <div>
+        <input type="text" placeholder="Enter New To Do" 
+          value={props.value}
+          onChange={props.onInputChange} />
+        <button onClick={props.buttonClick}>Add To Do</button>
+
+        <button onClick={props.displayAllButtonClick}>
+            All
+          </button>
+
+          <button onClick={props.displayNotDoneButtonClick}>          
+            To-Do
+          </button>
+
+          <button onClick={props.displayDoneButtonClick}>          
+            Done
+          </button>     
+      </div>
+    )
 }
 
-export default App;
+const SearchInput = (props: any) => {
+    return(
+      <div>
+          <input type="text" placeholder="Enter Search Item" 
+            value={props.value}
+            onChange={props.onSearch} />
+        <button onClick={props.searchButtonClick}>
+          search
+        </button> 
+      </div>  
+    )
+}
 
 const TodoList = (props: any) => {
   // console.log("props.todoArr->", props.todoArr);
@@ -138,11 +209,8 @@ const TodoList = (props: any) => {
         </button>
       </li>
     )
-  });
-
-
-
-
+  })
+}
 
 
 
@@ -164,7 +232,6 @@ const TodoList = (props: any) => {
   // return(
   //   <ul>{listItems}</ul>
   // )
-}
 
 // const myObj = {age: 10, name: "dead"};
 // const Run = printLabel(myObj);
