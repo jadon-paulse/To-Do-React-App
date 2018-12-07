@@ -103,9 +103,10 @@ class App extends React.Component {
     const todo = {
       task: this.state.value,
     }
-    todoApi.findBy("task",todo.task).then(results => 
-      {console.log("searchButtonClick ->",results);
-        this.setState({ todoArr: results }, () => {
+    todoApi.searchBy("task",todo.task).then(result => 
+      {console.log("searchButtonClick ->",result);
+        this.setState({ todoArr: result }, () => {
+          console.log("clicked search",this.state)
     })
   })
   }
@@ -179,7 +180,7 @@ const TodoInput = (props: any) => {
 const SearchInput = (props: any) => {
     return(
       <div>
-          <input type="text" placeholder="Enter Search Item" 
+        <input type="text" placeholder="Enter Search Item" 
             value={props.value}
             onChange={props.onSearch} />
         <button onClick={props.searchButtonClick}>

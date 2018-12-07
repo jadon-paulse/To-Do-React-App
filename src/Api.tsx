@@ -18,6 +18,11 @@ const todoApi = (function () {
         return todo[key] === value;
       }));
     },
+    searchBy(key: any, value: any) {
+      return Promise.resolve(Object.keys(todos).map((k) => todos[k]).filter((todo: any) => {
+        return todo[key].includes(value);
+      }));
+    },
     create(todo: any) {
       return new Promise((resolve, reject) => {
         try {
